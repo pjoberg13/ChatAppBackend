@@ -1,11 +1,15 @@
 package peter.finalprojectparallel.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,7 +18,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * Extending WebSecurityConfigurerAdapter allows us to bring in all the methods afforded to us by Spring Security
  */
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    /**
+     * loads user data from given source, in our case DB, and provides that data to Spring.
+     * because it is an interface we have to create an implementation class for the interface
+     */
+    private final UserDetailsService userDetailsService;
 
     /**
      * we disable csrf because this type of attack mainly occurs in instances with session authentication
@@ -34,8 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) {
-
+    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
     }
 
     /**
@@ -48,5 +60,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //the hash through brute force. Specifically, SHA-256 can more efficiently be brute forced with a GPU than
         //BCrypt
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Because AuthenticationManager is an interface we have to specify which type of Bean we want to instantiate because
+     * there are multiple possible implementations of authentication manager.
+     * @return
+     * @throws Exception
+     */
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

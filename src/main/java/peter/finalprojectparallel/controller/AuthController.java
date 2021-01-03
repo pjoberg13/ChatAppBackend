@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import peter.finalprojectparallel.dto.AuthenticationResponse;
+import peter.finalprojectparallel.dto.LoginRequest;
 import peter.finalprojectparallel.dto.RegisterRequest;
 import peter.finalprojectparallel.service.AuthService;
 
@@ -29,5 +31,10 @@ public class AuthController {
     public ResponseEntity<String> verifyAccount(@PathVariable String token) {
         authService.verifyAccount(token);
         return new ResponseEntity<>("Account successfully activated", HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 }

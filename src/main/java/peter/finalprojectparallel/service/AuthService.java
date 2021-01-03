@@ -1,9 +1,15 @@
 package peter.finalprojectparallel.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import peter.finalprojectparallel.dto.AuthenticationResponse;
+import peter.finalprojectparallel.dto.LoginRequest;
 import peter.finalprojectparallel.dto.RegisterRequest;
 import peter.finalprojectparallel.exception.QuackAppException;
 import peter.finalprojectparallel.model.NotificationEmail;
@@ -11,6 +17,7 @@ import peter.finalprojectparallel.model.User;
 import peter.finalprojectparallel.model.VerificationToken;
 import peter.finalprojectparallel.repository.UserRepository;
 import peter.finalprojectparallel.repository.VerificationTokenRepository;
+import peter.finalprojectparallel.security.JwtProvider;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -24,6 +31,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     /**
      * This method creates a new instance of user, maps the values from the register request instance to their respective
@@ -76,11 +85,28 @@ public class AuthService {
         fetchUserAndEnable(verificationToken.get());
     }
 
-    @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        User user =userRepository.findByUsername(username).orElseThrow(() -> new QuackAppException("User not found with name" + username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new QuackAppException("User not found with name" + username));
         user.setEnabled(true);
         userRepository.save(user);
+    }
+
+    /**
+     * Takes the loginRequest dto from the API endpoint and passes it to authentication manager to verify the username and
+     * password of user.
+     * @param loginRequest
+     * @return
+     */
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginRequest.getUsername(), loginRequest.getPassword()));
+        //If you want to check if a user is logged in or not you can check this security context
+        // and if object is found user is logged in
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        //take the token that is created by the jwtProvider.generateToken method using the authenticate object and
+        //pass it into the constructor for a DTO object of type AuthenticationResponse that will be returned to client
+        String token = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(token, loginRequest.getUsername());
     }
 }
