@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -28,4 +29,6 @@ public class Channel {
     private Instant created;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+    @ManyToMany(mappedBy = "subscribedChannels")
+    private Collection<User> subscribedUsers;
 }
