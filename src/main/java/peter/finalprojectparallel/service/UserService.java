@@ -9,6 +9,7 @@ import peter.finalprojectparallel.model.User;
 @Service
 @AllArgsConstructor
 public class UserService {
+
     public UserDto mapToDto(User user) {
         return UserDto.builder()
                 .id(user.getUserId())
@@ -17,4 +18,5 @@ public class UserService {
                 .numberOfChannels(user.getSubscribedChannels().size())
                 .build();
     }
+
 }

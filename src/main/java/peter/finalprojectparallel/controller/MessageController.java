@@ -26,10 +26,9 @@ public class MessageController extends TextWebSocketHandler {
 
     @CrossOrigin
     @PostMapping("/channel/{channelId}/message")
-    public ResponseEntity<Void> create(@RequestBody MessageRequest messageRequest, @PathVariable Long channelId){
-//        return new ResponseEntity<>(messageService.create(message, channelId), HttpStatus.CREATED);
+    public ResponseEntity<String> create(@RequestBody MessageRequest messageRequest, @PathVariable Long channelId){
         messageService.create(messageRequest, channelId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body("message created");
     }
 
     @CrossOrigin
@@ -47,10 +46,3 @@ public class MessageController extends TextWebSocketHandler {
     }
 
 }
-
-//@CrossOrigin
-//@MessageMapping("/chat/{channel_id}") //url front end sends message to
-//@SendTo("/channel/{channel_id}") //url you want to subscribe to!
-//public Message createWithSock(@RequestBody Message message, @DestinationVariable Long channel_id){
-//    return cmService.create(message, channel_id);
-//}

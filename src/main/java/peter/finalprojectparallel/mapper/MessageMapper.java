@@ -12,7 +12,6 @@ import peter.finalprojectparallel.model.Message;
 import peter.finalprojectparallel.model.User;
 
 @AllArgsConstructor
-//@NoArgsConstructor
 @Mapper(componentModel = "spring")
 public abstract class MessageMapper {
 
@@ -33,22 +32,3 @@ public abstract class MessageMapper {
         return TimeAgo.using(message.getCreated().toEpochMilli());
     }
 }
-
-//String getDuration(Post post) { return TimeAgo.using(post.getCreatedDate().toEpochMilli()); }
-
-//@Mapping(target = "id", source = "postId")
-//@Mapping(target = "postName", source = "postName")
-//@Mapping(target = "description", source = "description")
-//@Mapping(target = "url", source = "url")
-//@Mapping(target = "subredditName", source = "subreddit.name")
-//@Mapping(target = "userName", source = "user.username")
-////@Mapping(target = "commentCount", expression = "java(commentCount(post))")
-//@Mapping(target = "duration", expression = "java(getDuration(post))")
-//public abstract PostResponse mapToDto(Post post);
-
-//@Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
-//@Mapping(target = "subreddit", source = "subreddit")
-//@Mapping(target = "user", source = "user")
-//@Mapping(target = "description", source = "postRequest.description")
-//@Mapping(target = "voteCount", constant = "0")
-//public abstract Post map(PostRequest postRequest, Subreddit subreddit, User user);

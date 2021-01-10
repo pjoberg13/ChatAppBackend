@@ -51,6 +51,8 @@ public class ChannelService {
                 .orElseThrow(() -> new QuackAppException("no channel found with that ID"));
         channel.getSubscribedUsers().add(user);
         channelRepository.save(channel);
+        user.getSubscribedChannels().add(channel);
+        userRepository.save(user);
         return channelMapper.mapChannelToDto(channel);
     }
 

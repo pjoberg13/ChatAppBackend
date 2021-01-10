@@ -31,7 +31,5 @@ public class User {
     private Instant created;
     private Boolean enabled;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable( joinColumns = {@JoinColumn(name = "user_id")},
-                inverseJoinColumns = {@JoinColumn(name = "channel_id")})
     private List<Channel> subscribedChannels;
 }
