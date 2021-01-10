@@ -29,6 +29,6 @@ public class Channel {
     private Instant created;
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    @ManyToMany(mappedBy = "subscribedChannels")
+    @ManyToMany(mappedBy = "subscribedChannels", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Collection<User> subscribedUsers;
 }
