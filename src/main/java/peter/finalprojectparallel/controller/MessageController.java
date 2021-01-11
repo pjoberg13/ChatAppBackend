@@ -20,7 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class MessageController extends TextWebSocketHandler {
-//public class MessageController {
 
     private final MessageService messageService;
 
