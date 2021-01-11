@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
-    private String username;
-    private String password;
+public class ChannelDto {
+    private Long channelId;
+    private String channelName;
+    private String description;
+    private Integer numberOfMessages;
+    private Integer numberOfUsers;
 }

@@ -30,6 +30,6 @@ public class User {
     private String email;
     private Instant created;
     private Boolean enabled;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Channel> subscribedChannels;
 }

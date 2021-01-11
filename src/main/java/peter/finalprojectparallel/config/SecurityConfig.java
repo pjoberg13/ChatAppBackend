@@ -3,6 +3,7 @@ package peter.finalprojectparallel.config;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import peter.finalprojectparallel.security.JwtAuthenticationFilter;
 
 /**
  * This class will contain all of our security configurations.
@@ -26,6 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * because it is an interface we have to create an implementation class for the interface
      */
     private final UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /**
      * we disable csrf because this type of attack mainly occurs in instances with session authentication
@@ -37,11 +41,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
                 //tells spring security to only configure HttpSecurity if the path matches the pattern
                 //specified by the antMatchers method
-        .authorizeRequests()
-        .antMatchers("/api/auth/**")
-        .permitAll()
-        .anyRequest()
-        .authenticated();
+            .authorizeRequests()
+            .antMatchers("/api/auth/**")
+            .permitAll()
+            .antMatchers(HttpMethod.GET, "/api/channel")
+            .permitAll()
+            .anyRequest()
+            .authenticated();
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired
